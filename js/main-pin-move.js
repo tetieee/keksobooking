@@ -4,8 +4,10 @@ window.mainPin.addEventListener('mousedown', function (evt) {
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY
+      
     };
-  
+    window.backend.save()
+    
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
       var shift = {
@@ -22,8 +24,8 @@ window.mainPin.addEventListener('mousedown', function (evt) {
     }
   
     var onMouseUp = function () {
-
-
+      console.log(window.json)
+      
 
     var currentAdr={
     WH: document.querySelector('.map__pin--main').getBoundingClientRect().width,
@@ -35,6 +37,27 @@ window.mainPin.addEventListener('mousedown', function (evt) {
 
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
+    
+    
+      window.createPin = function() {
+        for (var i = 0; i < json.length; i++) {
+            pins[i] = pinCoor.cloneNode(true);
+            pins[i].setAttribute(
+                "style",
+                "left:" + json[i].location.x + "px;top:" + json[i].location.y + "px"
+            );
+            pins[i].querySelector("img").setAttribute("src", json[i].author.avatar);
+            pins[i].setAttribute("alt", json[i].offer.title);
+            
+            container.appendChild(pins[i]);
+
+            
+      }
+      
+        
+    };
+    window.createPin();
+    window.card()
     };
   
     document.addEventListener('mousemove', onMouseMove);
