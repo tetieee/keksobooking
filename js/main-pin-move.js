@@ -38,8 +38,8 @@
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
 
-      window.createPin = function () {
-        for (var i = 0; i < json.length; i++) {
+      window.createPin = function (data) {
+        for (var i = 0; i < data.length; i++) {
           pins[i] = pinCoor.cloneNode(true);
           pins[i].setAttribute(
             "style",
@@ -53,8 +53,8 @@
           container.appendChild(pins[i]);
         }
       };
-      window.createPin();
-      window.card();
+      window.createPin(json);
+      window.card(json);
     };
 
     document.addEventListener("mousemove", onMouseMove);

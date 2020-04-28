@@ -1,5 +1,4 @@
 (function () {
-    
   var filterPriceMap = {
     low: {
       MIN: 0,
@@ -14,48 +13,126 @@
       MAX: 9999999,
     },
   };
+  var switchPrice = function (arr) {
+    switch (filterFormPrice.value) {
+      case "low":
+        window.priced = arr.filter(function (item) {
+          return (
+            item.offer.price >= filterPriceMap.low.MIN &&
+            item.offer.price <= filterPriceMap.low.MAX
+          );
+        });
+
+        break;
+      case "middle":
+        window.priced = arr.filter(function (item) {
+          return (
+            item.offer.price >= filterPriceMap.middle.MIN &&
+            item.offer.price <= filterPriceMap.middle.MAX
+          );
+        });
+        break;
+      case "high":
+        window.priced = arr.filter(function (item) {
+          return (
+            item.offer.price >= filterPriceMap.high.MIN &&
+            item.offer.price <= filterPriceMap.high.MAX
+          );
+        });
+        break;
+    }
+    filteredPins(priced);
+  };
+
   var filterForm = document.querySelector(".map__filters");
   var filterFormType = filterForm.querySelector("#housing-type");
   var filterFormPrice = filterForm.querySelector("#housing-price");
   var filterFormRooms = filterForm.querySelector("#housing-rooms");
   var filterFormGuests = filterForm.querySelector("#housing-guests");
   var filterFormFeatures = filterForm.querySelector("#housing-features");
-  var filteredPins = function () {
-    for (var i = 0; i < jsonCopy.length; i++) {
-      container.removeChild(pins[i]);
-      var fPins = [];
-      fPins[i] = pinCoor.cloneNode(true);
-      fPins[i].setAttribute(
-        "style",
-        "left:" +
-          jsonCopy[i].location.x +
-          "px;top:" +
-          jsonCopy[i].location.y +
-          "px"
-      );
-      fPins[i]
-        .querySelector("img")
-        .setAttribute("src", jsonCopy[i].author.avatar);
-      fPins[i].setAttribute("alt", jsonCopy[i].offer.title);
+  var filteredPins = function (data) {
+    pins.forEach(function (item) {
+      item.remove();
+    });
 
-      container.appendChild(fPins[i]);
+    for (var i = 0; i < data.length; i++) {
+      pins[i] = pinCoor.cloneNode(true);
+      pins[i].setAttribute(
+        "style",
+        "left:" + data[i].location.x + "px;top:" + data[i].location.y + "px"
+      );
+      pins[i].querySelector("img").setAttribute("src", data[i].author.avatar);
+      pins[i].setAttribute("alt", data[i].offer.title);
+
+      container.appendChild(pins[i]);
+      console.log(pins);
+      window.card(data);
     }
   };
-  filterFormType.addEventListener("change", function () {
-    var data = json.slice();
-
-
-      var filteredData = data.filter(function (item) {
-         item.offer.type === filterFormType.value;
+  var guestsSelector = function(arr){
+    if (filterFormGuests.value == "any") {
+        window.fGuests=arr   
+    } else {
+      window.fGuests = arr.filter(function (item) {
+       return item.offer.guests == filterFormGuests.value;
       });
-      console.log(filteredData);
-      
-    
-  });
-  
-})();
+    }
+  }
+  filterFormType.addEventListener("change", function () {
+    window.data = json.slice();
+    window.filteredData = data.filter(function (item) {
+      return item.offer.type === filterFormType.value;
+    });
+    console.log(filteredData);
 
-/*ыва
-1 фильтр(сортировка по первому фильтру, отрисовка), 2 фильтр( сортировка по 2 фильтру, отрисовка)......
-1 фильтрм(сортировка по нему), 2 фильтр(сортировка по нему).........n фильтр, сортировка по нему и отрисовка
-*/
+    filteredPins(filteredData);
+  });
+
+  filterFormPrice.addEventListener("change", function () {
+    if (filterFormType.value !== "any") {
+      switchPrice(filteredData);
+    } else {
+      switchPrice(json);
+    }
+  });
+  filterFormRooms.addEventListener("change", function () {
+    if (filterFormType.value !== "any") {
+      switch (filterFormPrice.value) {
+        case "any":
+          window.fRooms = filteredData.filter(function (item) {
+            return item.offer.rooms == filterFormRooms.value;
+          });
+
+          break;
+        case filterFormPrice.value:
+          window.fRooms = priced.filter(function (item) {
+            return item.offer.rooms == filterFormRooms.value;
+          });
+
+          break;
+      }
+    } else {
+      window.fRooms = json.filter(function (item) {
+        return item.offer.rooms == filterFormRooms.value;
+      });
+    }
+    filteredPins(window.fRooms);
+  });
+
+  filterFormGuests.addEventListener("change", function () {
+      if(filterFormType.value=='any'){
+          guestsSelector(window.json)
+      }else{
+      switch(filterFormRooms.value){
+          case 'any':
+    guestsSelector(window.priced);
+    break;
+    case filterFormRooms.value:
+        guestsSelector(window.fRooms)
+        break;
+}
+      }
+    filteredPins(window.fGuests)
+
+  });
+})();
