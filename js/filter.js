@@ -69,15 +69,15 @@
       window.card(data);
     }
   };
-  var guestsSelector = function(arr){
+  var guestsSelector = function (arr) {
     if (filterFormGuests.value == "any") {
-        window.fGuests=arr   
+      window.fGuests = arr;
     } else {
       window.fGuests = arr.filter(function (item) {
-       return item.offer.guests == filterFormGuests.value;
+        return item.offer.guests == filterFormGuests.value;
       });
     }
-  }
+  };
   filterFormType.addEventListener("change", function () {
     window.data = json.slice();
     window.filteredData = data.filter(function (item) {
@@ -120,19 +120,18 @@
   });
 
   filterFormGuests.addEventListener("change", function () {
-      if(filterFormType.value=='any'){
-          guestsSelector(window.json)
-      }else{
-      switch(filterFormRooms.value){
-          case 'any':
-    guestsSelector(window.priced);
-    break;
-    case filterFormRooms.value:
-        guestsSelector(window.fRooms)
-        break;
-}
+    if (filterFormType.value == "any") {
+      guestsSelector(window.json);
+    } else {
+      switch (filterFormRooms.value) {
+        case "any":
+          guestsSelector(window.priced);
+          break;
+        case filterFormRooms.value:
+          guestsSelector(window.fRooms);
+          break;
       }
-    filteredPins(window.fGuests)
-
+    }
+    filteredPins(window.fGuests);
   });
 })();
